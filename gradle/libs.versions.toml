@@ -1,6 +1,6 @@
 [versions]
 ## Paper
-paperweight = "2.0.0-beta.19"   # https://github.com/PaperMC/paperweight
+paperweight = "2.0.0-beta.19" # https://github.com/PaperMC/paperweight
 paper = "1.21.11-R0.1-SNAPSHOT" # https://github.com/PaperMC/Paper
 
 ## Minecraft

@@ -81,6 +81,7 @@ public class SwordEnchantments implements Listener {
         if (this.pluginSupport.isFriendly(event.getDamager(), event.getEntity())) return;
 
         if (this.crazyManager.isBreakRageOnDamageOn() && event.getEntity() instanceof Player player) {
+            if (player == null) return;
             CEPlayer cePlayer = this.crazyManager.getCEPlayer(player);
 
             if (cePlayer != null) {
