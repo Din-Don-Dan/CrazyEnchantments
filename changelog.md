@@ -1,7 +1,7 @@
-## Fixes
-- Fixed different log types getting broken at the same time with TreeFeller.
-- Fixed TreeFeller activating on different blocks near trees.
+### Changes
+- Improved performance with file management.
+- Improved configuration checks by supplying default values, which might fix specific issues people were having due to no default value present.
 
-## Added
-- Nether Tree support to TreeFeller
-- Leaf support to TreeFeller
+## Fixes
+- Fixed an issue with slot crystals only applying to items that can be enchanted.
+- Fixed an issue on server shutdown.
