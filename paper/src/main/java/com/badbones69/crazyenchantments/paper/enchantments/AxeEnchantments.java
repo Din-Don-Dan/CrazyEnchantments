@@ -130,7 +130,7 @@ public class AxeEnchantments implements Listener {
     }
     private boolean isTrunkBlock(String startMaterial) { //Checks whether the block is a tree trunk
         boolean isTrunk = false;
-        if (startMaterial.endsWith("LOG") || startMaterial.endsWith("WOOD") || startMaterial.endsWith("STEM") || startMaterial.endsWith("HYPHAE")) isTrunk = true;
+        if (startMaterial.endsWith("LOG") || startMaterial.endsWith("WOOD") || startMaterial.endsWith("WARPED_STEM") || startMaterial.endsWith("HYPHAE")) isTrunk = true;
             //&& !startMaterial.startsWith("STRIPPED"))
         return (isTrunk);
     }
