@@ -50,6 +50,8 @@ public class AxeEnchantments implements Listener {
 
     private final SupportUtils support = this.platform.getSupport();
 
+    private final int[] treefellerMax = {8, 22, 36, 50, 64};
+
     @NotNull
     private final Starter starter = this.plugin.getStarter();
 
@@ -72,7 +74,7 @@ public class AxeEnchantments implements Listener {
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(currentItem);
         if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.TREEFELLER, enchantments)) return;
 
-        Set<Block> blockList = getTree(event.getBlock(), 5 * enchantments.get(CEnchantments.TREEFELLER.getEnchantment()));
+        Set<Block> blockList = getTree(event.getBlock(), treefellerMax[enchantments.get(CEnchantments.TREEFELLER.getEnchantment())-1] );
         boolean damage = FileKeys.CONFIG.getConfiguration().getBoolean("Settings.EnchantmentOptions.TreeFeller-Full-Durability", true);
 
         if (!new MassBlockBreakEvent(player, blockList).callEvent()) return;
@@ -90,9 +92,14 @@ public class AxeEnchantments implements Listener {
     private Set<Block> getTree(Block startBlock, int maxBlocks) {
         Set<Block> checkedBlocks = new HashSet<>(), tree = new HashSet<>();
         Queue<Block> queue = new LinkedList<>();
-        queue.add(startBlock);
+
         checkedBlocks.add(startBlock);
         int startX = startBlock.getX(), startZ = startBlock.getZ();
+        
+        // Check whether the starting block is a valid start.
+        // If yes, add it to the queue and start the process.
+        String startMaterial = startBlock.getType().toString();
+        if (isTrunkBlock(startMaterial)) queue.add(startBlock);
 
         while (!queue.isEmpty()) {
             Block currentBlock = queue.poll();
@@ -107,22 +114,50 @@ public class AxeEnchantments implements Listener {
                         if (neighbor.isEmpty() || checkedBlocks.contains(neighbor)) continue;
                         if (notInRange(startX, neighbor.getX()) || notInRange(startZ, neighbor.getZ())) continue;
 
-                        String neighborType = neighbor.getType().toString();
+                        // Add neighbor to the tree only if it's either the same kind of log or its leaf.
+                        String neighborMaterial = neighbor.getType().toString();
+                        boolean isLeaf = isLeafBlock(neighborMaterial, startMaterial);
 
-                        if ((neighborType.endsWith("LOG") || neighborType.endsWith("LEAVES"))) {
-                            if (neighborType.endsWith("LOG")) tree.add(neighbor);
-                            checkedBlocks.add(neighbor);
+                        if ((startMaterial == neighborMaterial) || isLeaf ) {
+                            tree.add(neighbor);
                             queue.add(neighbor);
                         }
+
+                        checkedBlocks.add(neighbor);
                     }
                 }
             }
         }
         return tree;
     }
+    private boolean isTrunkBlock(String startMaterial) { //Checks whether the block is a tree trunk
+        boolean isTrunk = false;
+        if (startMaterial.endsWith("LOG") || startMaterial.endsWith("WOOD") || startMaterial.endsWith("MUSHROOM_STEM") || startMaterial.endsWith("WARPED_STEM") || startMaterial.endsWith("CRIMSON_STEM")  || startMaterial.endsWith("HYPHAE")) isTrunk = true;
+            //&& !startMaterial.startsWith("STRIPPED"))
+        return (isTrunk);
+    }
+
+    private boolean isLeafBlock(String targetMaterial, String currentMaterial) { //Checks whether the Targeted block is a 'leaf' of the current block.
+
+        String[] cSplit = currentMaterial.split("_");
+        String[] tSplit = targetMaterial.split("_");
+        
+        // Check for overworld trees
+        boolean isTreeLeaf = (targetMaterial.endsWith("LEAVES") && (cSplit[0].equalsIgnoreCase(tSplit[0])));
+        // Check for nether trees
+        boolean isNetherLeaf = (
+                (targetMaterial.endsWith("WART_BLOCK") && cSplit[0].equalsIgnoreCase(tSplit[0])) ||
+                (tSplit[0].equalsIgnoreCase("NETHER") && cSplit[0].equalsIgnoreCase("CRIMSON")) ||
+                (targetMaterial.endsWith("SHROOMLIGHT") && (cSplit[0].equalsIgnoreCase("CRIMSON") || cSplit[0].equalsIgnoreCase("WARPED") || cSplit[0].equalsIgnoreCase("NETHER")) )
+                );
+        // Check for big mushrooms
+        boolean isMushroomLeaf = (targetMaterial.endsWith("MUSHROOM_BLOCK") && ( currentMaterial.endsWith("MUSHROOM_STEM") ));
+
+        return ( isTreeLeaf || isNetherLeaf || isMushroomLeaf);
+    }
 
     private boolean notInRange(int startPos, int pos2) {
-        int range = 5;
+        int range = 16;
         return pos2 > (startPos + range) || pos2 < (startPos - range);
     }
 
