@@ -29,11 +29,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.Map;
 import java.util.Set;
 
 public class PickaxeEnchantments implements Listener {
+
+    private final int[] maxVeinMinerBlocks = {2, 8, 14, 20, 26, 32};
 
     @NotNull
     private final CrazyEnchantments plugin = JavaPlugin.getPlugin(CrazyEnchantments.class);
@@ -109,9 +113,7 @@ public class PickaxeEnchantments implements Listener {
         boolean damage = FileKeys.CONFIG.getConfiguration().getBoolean("Settings.EnchantmentOptions.VeinMiner-Full-Durability", true);
 
         if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.VEINMINER, enchantments)) return;
-
-        HashSet<Block> blockList = getOreBlocks(currentBlock.getLocation(), enchantments.get(CEnchantments.VEINMINER.getEnchantment()));
-        blockList.add(currentBlock);
+        HashSet<Block> blockList = getVeinminerBlocks(currentBlock, maxVeinMinerBlocks[enchantments.get(CEnchantments.VEINMINER.getEnchantment())-1]);
 
         if (massBlockBreakCheck(player, blockList)) return;
 
@@ -195,41 +197,37 @@ public class PickaxeEnchantments implements Listener {
         event.setExpToDrop(event.getExpToDrop() + (enchants.get(CEnchantments.EXPERIENCE.getEnchantment()) + 2));
     }
 
-    private HashSet<Block> getOreBlocks(Location loc, int amount) {
-        HashSet<Block> blocks = new HashSet<>(Set.of(loc.getBlock()));
-        HashSet<Block> newestBlocks = new HashSet<>(Set.of(loc.getBlock()));
+    private HashSet<Block> getVeinminerBlocks(Block start, int maxBlocks) {
+        HashSet<Block> blocks = new HashSet<>(), checked = new HashSet<>();
+        Queue<Block> queue = new LinkedList<>();
+        Material material = start.getType();
+        checked.add(start);
+        queue.add(start);
+        blocks.add(start);
 
-        int depth = 0;
+        while (!queue.isEmpty()) {
+            Block currentBlock = queue.poll();
 
-        while (depth < amount) {
-            HashSet<Block> tempBlocks = new HashSet<>();
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    for (int y = -1; y <= 1; y++) {
+                        if (blocks.size() > maxBlocks) break;
+                        if (x == 0 && y == 0 && z == 0) continue; // Skip initial block.
 
-            for (Block block1 : newestBlocks) {
-                for (Block block : getSurroundingBlocks(block1.getLocation())) {
-                    if (!blocks.contains(block) && isOreBlock(block.getType())) tempBlocks.add(block);
+                        Block neighbor = currentBlock.getRelative(x, y, z);
+                        if (neighbor.isEmpty() || checked.contains(neighbor)) continue;
+                        if ((material == neighbor.getType())) {
+                            blocks.add(neighbor);
+                            queue.add(neighbor);
+                        }
+
+                        checked.add(neighbor);
+                    }
                 }
             }
-
-            blocks.addAll(tempBlocks);
-            newestBlocks = tempBlocks;
-
-            ++depth;
         }
 
         return blocks;
-    } 
-    
-    private HashSet<Block> getSurroundingBlocks(Location loc) {
-        HashSet<Block> locations = new HashSet<>();
-        
-        locations.add(loc.clone().add(0,1,0).getBlock());
-        locations.add(loc.clone().add(0,-1,0).getBlock());
-        locations.add(loc.clone().add(1,0,0).getBlock());
-        locations.add(loc.clone().add(-1,0,0).getBlock());
-        locations.add(loc.clone().add(0,0,1).getBlock());
-        locations.add(loc.clone().add(0,0,-1).getBlock());
-        
-        return locations;
     }
 
     private HashSet<Block> getBlocks(Location loc, BlockFace blockFace, Integer depth) {
