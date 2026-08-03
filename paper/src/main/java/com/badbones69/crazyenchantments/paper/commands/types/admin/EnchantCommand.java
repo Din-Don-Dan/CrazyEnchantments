@@ -126,13 +126,13 @@ public class EnchantCommand extends com.badbones69.crazyenchantments.paper.comma
                 enchantReference.set(context);
 
                 return Optional.ofNullable(this.crazyManager.getEnchantmentFromName(context));
-            }).ifPresent(enchantment -> reference.set(new CEBook(enchantment, level.get()).buildBook()));
+            }).ifPresent(enchantment -> reference.set(new CEBook(enchantment, level.get()).buildBook(sender)));
         } else if (flags.hasFlag("c")) {
             flags.getFlagValue("c").flatMap(context -> {
                 enchantReference.set(context);
 
                 return Optional.ofNullable(this.bookSettings.getCategory(context));
-            }).ifPresent(category -> reference.set(category.getLostBook().getLostBook(category).build()));
+            }).ifPresent(category -> reference.set(category.getLostBook().getLostBook(category).build(sender)));
         }
 
         final ItemStack itemStack = reference.get();

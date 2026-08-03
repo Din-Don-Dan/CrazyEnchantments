@@ -6,6 +6,7 @@ import com.badbones69.crazyenchantments.paper.api.enums.keys.FileKeys;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DataKeys;
 import com.badbones69.crazyenchantments.paper.api.enums.pdc.DustData;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
@@ -83,16 +84,16 @@ public enum Dust {
         return this.configName;
     }
     
-    public ItemStack getDust() {
-        return getDust(1);
+    public ItemStack getDust(final Audience player) {
+        return getDust(player, 1);
     }
     
-    public ItemStack getDust(int amount) {
-        return getDust(this.methods.percentPick(this.max, this.min), amount);
+    public ItemStack getDust(final Audience player, final int amount) {
+        return getDust(player, this.methods.percentPick(this.max, this.min), amount);
     }
 
-    public ItemStack getDust(final int percent, final int amount) {
-        final ItemStack item = itemBuilderDust.get(this).addLorePlaceholder("%Percent%", String.valueOf(percent)).setAmount(amount).build();
+    public ItemStack getDust(final Audience player, final int percent, final int amount) {
+        final ItemStack item = itemBuilderDust.get(this).addLorePlaceholder("%Percent%", String.valueOf(percent)).setAmount(amount).build(player);
 
         if (Objects.equals(getName(), FAILED_DUST.getName())) return item;
 

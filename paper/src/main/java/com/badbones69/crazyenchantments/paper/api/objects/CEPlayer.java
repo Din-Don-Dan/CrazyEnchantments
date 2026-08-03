@@ -77,7 +77,7 @@ public class CEPlayer {
         getPlayer().ifPresent(player -> {
             final EntityEquipment equipment = player.getEquipment();
 
-            for (ItemStack item : kit.getKitItems()) {
+            for (ItemStack item : kit.getKitItems(player)) {
                 if (kit.canAutoEquip()) {
                     switch (item.getType().toString().contains("_") ? item.getType().toString().toLowerCase().split("_")[1] : "No") {
                         case "helmet" -> {

@@ -4,6 +4,7 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +87,7 @@ public class GKitz {
      * Get the items for the GKit. Needs to be done as it has to get random levels each time.
      * @return A list of all the ItemStacks.
      */
-    public List<ItemStack> getKitItems() {
+    public List<ItemStack> getKitItems(final Audience player) {
         List<ItemStack> items = new ArrayList<>();
 
         for (String itemString : this.itemStrings) {
@@ -112,7 +113,7 @@ public class GKitz {
                 } catch (Exception ignore) {}
             }
 
-            items.add(item.build());
+            items.add(item.build(player));
         }
 
         return items;

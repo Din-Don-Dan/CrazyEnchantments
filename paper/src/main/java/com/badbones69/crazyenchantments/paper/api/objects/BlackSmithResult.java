@@ -40,7 +40,7 @@ public class BlackSmithResult {
             mainBook.getLevel() == subBook.getLevel() &&
             // Makes sure level doesn't go past max.
             mainBook.getLevel() + 1 <= mainBook.getEnchantment().getMaxLevel()) {
-                this.resultItem = mainBook.setLevel(mainBook.getLevel() + 1).buildBook();
+                this.resultItem = mainBook.setLevel(mainBook.getLevel() + 1).buildBook(player);
                 this.cost += BlackSmithManager.getBookUpgrade();
             }
         } else {

@@ -29,7 +29,7 @@ public class LostBookCommand extends com.badbones69.crazyenchantments.paper.comm
         }
 
         Optional.ofNullable(this.bookSettings.getCategory(name)).ifPresentOrElse(category -> {
-            final ItemStack itemStack = category.getLostBook().getLostBook(category, amount).build();
+            final ItemStack itemStack = category.getLostBook().getLostBook(category, amount).build(player);
 
             if (itemStack.isEmpty()) {
                 sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

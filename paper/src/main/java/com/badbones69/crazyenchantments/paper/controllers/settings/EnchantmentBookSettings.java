@@ -21,6 +21,7 @@ import com.ryderbelserion.fusion.paper.FusionPaper;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Color;
 import org.bukkit.configuration.ConfigurationSection;
@@ -92,7 +93,7 @@ public class EnchantmentBookSettings {
      * @return A new scrambled book.
      */
     @Nullable
-    public ItemStack getNewScrambledBook(final ItemStack book) {
+    public ItemStack getNewScrambledBook(final Audience player, final ItemStack book) {
         final PersistentDataContainerView view = book.getPersistentDataContainer();
 
         final EnchantedBook data = Methods.getGson().fromJson(view.get(DataKeys.stored_enchantments.getNamespacedKey(), PersistentDataType.STRING), EnchantedBook.class);
@@ -111,7 +112,7 @@ public class EnchantmentBookSettings {
 
         if (enchantment == null) return null;
 
-        return new CEBook(enchantment, bookLevel, EnchantUtils.getHighestEnchantmentCategory(enchantment)).buildBook();
+        return new CEBook(enchantment, bookLevel, EnchantUtils.getHighestEnchantmentCategory(enchantment)).buildBook(player);
     }
 
     /**
@@ -157,8 +158,8 @@ public class EnchantmentBookSettings {
      * @return the itemstack of the enchantment book.
      */
     @NotNull
-    public ItemStack getEnchantmentBookItem() {
-        return new ItemBuilder(this.enchantmentBook).build();
+    public ItemStack getEnchantmentBookItem(final Audience player) {
+        return new ItemBuilder(this.enchantmentBook).build(player);
     }
 
     /**

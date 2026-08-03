@@ -4,6 +4,8 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.api.CrazyManager;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
+import net.kyori.adventure.audience.Audience;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -48,8 +50,8 @@ public class GKitzItem {
     /**
      * @return Returns a fully finished item.
      */
-    public ItemStack build() {
-        ItemStack item = this.itemBuilder.build();
+    public ItemStack build(final Audience player) {
+        ItemStack item = this.itemBuilder.build(player);
 
         for (Map.Entry<CEnchantment, Integer> enchantment : this.ceEnchantments.entrySet()) {
             this.crazyManager.addEnchantment(item, enchantment.getKey(), enchantment.getValue());

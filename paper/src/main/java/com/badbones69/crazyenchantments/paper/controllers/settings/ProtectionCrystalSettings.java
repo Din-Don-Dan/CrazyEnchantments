@@ -10,6 +10,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.ColorUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -49,12 +50,12 @@ public class ProtectionCrystalSettings {
                 .setGlow(config.getBoolean("Settings.ProtectionCrystal.Glowing", false));
     }
 
-    public final ItemStack getCrystal() {
-        return getCrystal(1);
+    public final ItemStack getCrystal(final Audience player) {
+        return getCrystal(player, 1);
     }
 
-    public final ItemStack getCrystal(final int amount) {
-        final ItemStack item = this.crystal.setAmount(amount).build();
+    public final ItemStack getCrystal(final Audience player, final int amount) {
+        final ItemStack item = this.crystal.setAmount(amount).build(player);
 
         item.editPersistentDataContainer(container -> container.set(DataKeys.protection_crystal.getNamespacedKey(), PersistentDataType.BOOLEAN, true));
 

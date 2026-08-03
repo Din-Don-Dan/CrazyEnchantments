@@ -32,7 +32,7 @@ public class DustCommand extends com.badbones69.crazyenchantments.paper.commands
         }
 
         Optional.ofNullable(Dust.getFromName(name)).ifPresentOrElse(dust -> {
-            final ItemStack itemStack = dust.getDust(percent, amount); //todo() random support
+            final ItemStack itemStack = dust.getDust(player, percent, amount); //todo() random support
 
             if (itemStack.isEmpty()) {
                 sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

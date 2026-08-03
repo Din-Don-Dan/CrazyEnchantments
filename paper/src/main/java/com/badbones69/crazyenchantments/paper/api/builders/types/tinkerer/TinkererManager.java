@@ -10,6 +10,7 @@ import com.badbones69.crazyenchantments.paper.api.objects.CEBook;
 import com.badbones69.crazyenchantments.paper.api.objects.CEnchantment;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
@@ -73,7 +74,7 @@ public class TinkererManager {
      * @param amount Amount of XP to store.
      * @return XP Bottle with custom amount of xp stored in it.
      */
-    public static ItemStack getXPBottle(String amount, final FileConfiguration config) {
+    public static ItemStack getXPBottle(Audience player, String amount, final FileConfiguration config) {
         String id = config.getString("Settings.BottleOptions.Item", "EXPERIENCE_BOTTLE");
         String name = config.getString("Settings.BottleOptions.Name", "");
         List<String> lore = new ArrayList<>();
@@ -82,7 +83,7 @@ public class TinkererManager {
             lore.add(l.replace("%Total%", amount).replace("%total%", amount));
         }
 
-        return new ItemBuilder().setMaterial(id).setName(name).setItemModel(config.getString("Settings.BottleOptions.Model.Namespace", ""), config.getString("Settings.BottleOptions.Model.Key", "")).setLore(lore).addKey(DataKeys.experience.getNamespacedKey(), amount).build();
+        return new ItemBuilder().setMaterial(id).setName(name).setItemModel(config.getString("Settings.BottleOptions.Model.Namespace", ""), config.getString("Settings.BottleOptions.Model.Key", "")).setLore(lore).addKey(DataKeys.experience.getNamespacedKey(), amount).build(player);
     }
 
     public static int getTotalXP(ItemStack item, final FileConfiguration config) {

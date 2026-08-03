@@ -99,7 +99,7 @@ public class ScrollListener implements Listener {
                     Random random = new Random();
 
                     CEnchantment enchantment = enchantments.get(random.nextInt(enchantments.size()));
-                    player.getInventory().addItem(new CEBook(enchantment, this.enchantmentBookSettings.getLevel(item, enchantment), 1).buildBook());
+                    player.getInventory().addItem(new CEBook(enchantment, this.enchantmentBookSettings.getLevel(item, enchantment), 1).buildBook(player));
                     event.setCurrentItem(this.enchantmentBookSettings.removeEnchantment(item, enchantment));
                 }
             }

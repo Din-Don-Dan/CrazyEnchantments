@@ -103,7 +103,7 @@ public class ColorUtils {
     }
 
     public static net.kyori.adventure.text.TextComponent legacyTranslateColourCodes(String input) {
-        return (net.kyori.adventure.text.TextComponent) LegacyComponentSerializer.legacyAmpersand().deserialize(input).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
+        return LegacyComponentSerializer.legacyAmpersand().deserialize(input).decorationIfAbsent(TextDecoration.ITALIC, TextDecoration.State.FALSE);
     }
 
     public static String toLegacy(Component text) {

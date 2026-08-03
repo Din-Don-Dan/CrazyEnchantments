@@ -23,7 +23,7 @@ public class BottleCommand extends EnchantCommand {
     @Permission(value = "crazyenchantments.bottle", def = PermissionDefault.OP)
     @Syntax("/crazyenchantments bottle [player] [xp-amount] [amount]")
     public void execute(final CommandSender sender, final Player player, @Suggestion("numbers") final int xp, @Suggestion("numbers") final int amount) {
-        final ItemStack itemStack = TinkererManager.getXPBottle(String.valueOf(xp), FileKeys.TINKER.getConfiguration());
+        final ItemStack itemStack = TinkererManager.getXPBottle(player, String.valueOf(xp), FileKeys.TINKER.getConfiguration());
 
         itemStack.setAmount(amount);
 

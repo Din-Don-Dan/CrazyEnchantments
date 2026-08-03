@@ -21,6 +21,7 @@ import com.badbones69.crazyenchantments.paper.support.SupportUtils;
 import com.ryderbelserion.fusion.core.api.enums.Level;
 import com.ryderbelserion.fusion.paper.FusionPaper;
 import com.ryderbelserion.fusion.paper.builders.folia.FoliaScheduler;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.damage.DamageSource;
@@ -323,7 +324,7 @@ public class SwordEnchantments implements Listener {
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
         if (EnchantUtils.isEventActive(CEnchantments.HEADLESS, damager, item, enchantments)) {
-            ItemStack head = new ItemBuilder().setMaterial("PLAYER_HEAD").setPlayerName(player.getName()).build();
+            ItemStack head = new ItemBuilder().setMaterial("PLAYER_HEAD").setPlayerName(player.getName()).build(player);
             event.getDrops().add(head);
         }
 
@@ -342,32 +343,36 @@ public class SwordEnchantments implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        if (event.getEntity().getKiller() != null) {
-            Player damager = event.getEntity().getKiller();
-            ItemStack item = this.methods.getItemInHand(damager);
+        final LivingEntity entity = event.getEntity();
+        final Player killer = entity.getKiller();
+
+        if (killer != null) {
+            ItemStack item = this.methods.getItemInHand(killer);
             Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
 
-            if (EnchantUtils.isEventActive(CEnchantments.INQUISITIVE, damager, item, enchantments)) {
+            if (EnchantUtils.isEventActive(CEnchantments.INQUISITIVE, killer, item, enchantments)) {
                 event.setDroppedExp(event.getDroppedExp() * (enchantments.get(CEnchantments.INQUISITIVE.getEnchantment()) + 1));
             }
 
             Material headMat = EntityUtils.getHeadMaterial(event.getEntity());
             if (headMat != null && !EventUtils.containsDrop(event, headMat)) {
                 double multiplier = this.crazyManager.getDecapitationHeadMap().getOrDefault(headMat, 0.0);
-                if (multiplier != 0.0 && EnchantUtils.isEventActive(CEnchantments.HEADLESS, damager, item, enchantments, multiplier)) {
-                    ItemStack head = new ItemBuilder().setMaterial(headMat).build();
+                if (multiplier != 0.0 && EnchantUtils.isEventActive(CEnchantments.HEADLESS, killer, item, enchantments, multiplier)) {
+                    ItemStack head = new ItemBuilder().setMaterial(headMat).build(entity instanceof Player player ? player : Audience.empty());
                     event.getDrops().add(head);
                 }
 			}
 
             // The entity that is killed is a player.
-            if (event.getEntity() instanceof Player && EnchantUtils.isEventActive(CEnchantments.CHARGE, damager, item, enchantments)) {
+            if (entity instanceof Player && EnchantUtils.isEventActive(CEnchantments.CHARGE, killer, item, enchantments)) {
                 int radius = 4 + enchantments.get(CEnchantments.CHARGE.getEnchantment());
-                damager.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1));
+                killer.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1));
 
-                damager.getNearbyEntities(radius, radius, radius).stream().filter(entity ->
-                        this.support.isFriendly(entity, damager)).forEach(entity ->
-                        ((Player) entity).addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1)));
+                killer.getNearbyEntities(radius, radius, radius).stream().filter(target -> this.support.isFriendly(target, killer)).forEach(target -> {
+                    if (target instanceof Player human) {
+                        human.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 10 * 20, 1));
+                    }
+                });
             }
         }
     }

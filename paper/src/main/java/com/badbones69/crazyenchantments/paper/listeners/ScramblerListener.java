@@ -12,7 +12,6 @@ import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBo
 import com.ryderbelserion.fusion.paper.builders.folia.FoliaScheduler;
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import net.kyori.adventure.text.logger.slf4j.ComponentLogger;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -76,8 +75,8 @@ public class ScramblerListener implements Listener {
      * Get the scrambler item stack.
      * @return The scramblers.
      */
-    public ItemStack getScramblers() {
-        return getScramblers(1);
+    public ItemStack getScramblers(final Player player) {
+        return getScramblers(player, 1);
     }
 
     /**
@@ -85,8 +84,8 @@ public class ScramblerListener implements Listener {
      * @param amount The amount you want.
      * @return The scramblers.
      */
-    public ItemStack getScramblers(int amount) {
-        ItemStack item = this.scramblerItem.setAmount(amount).build();
+    public ItemStack getScramblers(final Player player, int amount) {
+        ItemStack item = this.scramblerItem.setAmount(amount).build(player);
 
         item.editPersistentDataContainer(container -> {
             container.set(DataKeys.scrambler.getNamespacedKey(), PersistentDataType.BOOLEAN, true);
@@ -117,7 +116,7 @@ public class ScramblerListener implements Listener {
         setGlass(inventory);
 
         for (int slot = 9; slot > 8 && slot < 18; slot++) {
-            inventory.setItem(slot, this.enchantmentBookSettings.getNewScrambledBook(book));
+            inventory.setItem(slot, this.enchantmentBookSettings.getNewScrambledBook(player, book));
         }
 
         player.openInventory(inventory);
@@ -133,7 +132,7 @@ public class ScramblerListener implements Listener {
             @Override
             public void run() {
                 if (this.full <= 50) { // When spinning.
-                    moveItems(inventory, book);
+                    moveItems(player, inventory, book);
 
                     setGlass(inventory);
 
@@ -152,7 +151,7 @@ public class ScramblerListener implements Listener {
 
                 if (this.full > 51) {
                     if (slowSpin().contains(this.time)) { // When Slowing Down
-                        moveItems(inventory, book);
+                        moveItems(player, inventory, book);
 
                         setGlass(inventory);
 
@@ -170,12 +169,12 @@ public class ScramblerListener implements Listener {
 
                         final ItemStack item = inventory.getItem(13);
 
-                        if (item != null) {
+                        if (item != null) { //todo() what
                             ItemStack clone;
 
-                            clone = item.withType(enchantmentBookSettings.getEnchantmentBookItem().getType());
+                            clone = item.withType(enchantmentBookSettings.getEnchantmentBookItem(player).getType());
 
-                            methods.setDurability(item, methods.getDurability(enchantmentBookSettings.getEnchantmentBookItem()));
+                            methods.setDurability(item, methods.getDurability(enchantmentBookSettings.getEnchantmentBookItem(player)));
 
                             methods.addItemToInventory(player, clone);
                         } else {
@@ -206,14 +205,14 @@ public class ScramblerListener implements Listener {
         return slow;
     }
 
-    private void moveItems(Inventory inv, ItemStack book) {
+    private void moveItems(Player player, Inventory inv, ItemStack book) {
         List<ItemStack> items = new ArrayList<>();
 
         for (int slot = 9; slot > 8 && slot < 17; slot++) {
             items.add(inv.getItem(slot));
         }
 
-        ItemStack newBook = this.enchantmentBookSettings.getNewScrambledBook(book);
+        ItemStack newBook = this.enchantmentBookSettings.getNewScrambledBook(player, book);
         newBook.setType(ColorUtils.getRandomPaneColor().getMaterial());
         inv.setItem(9, newBook);
 
@@ -224,29 +223,39 @@ public class ScramblerListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onReRoll(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
+        if (!(event.getWhoClicked() instanceof Player player)) return;
 
-        if (event.getClickedInventory() == null) return;
+        final Inventory inventory = event.getClickedInventory();
 
-        ItemStack book = event.getCurrentItem() != null ? event.getCurrentItem() : new ItemStack(Material.AIR);
+        if (inventory == null) return;
+
+        final ItemStack currentItem = event.getCurrentItem();
+
+        ItemStack book = currentItem != null ? currentItem : ItemStack.empty();
+
         ItemStack scrambler = event.getCursor();
 
-        if (book.getType() == Material.AIR || scrambler.getType() == Material.AIR) return;
+        if (book.isEmpty() || scrambler.isEmpty()) return;
+
         if (book.getAmount() != 1 || scrambler.getAmount() != 1) return;
+
         if (!isScrambler(scrambler) || !this.enchantmentBookSettings.isEnchantmentBook(book)) return;
-        if (event.getClickedInventory().getType() != InventoryType.PLAYER) {
+
+        if (inventory.getType() != InventoryType.PLAYER) {
             player.sendMessage(Messages.NEED_TO_USE_PLAYER_INVENTORY.getMessage());
+
             return;
         }
 
         event.setCancelled(true);
-        player.setItemOnCursor(new ItemStack(Material.AIR));
+
+        player.setItemOnCursor(ItemStack.empty());
 
         if (this.animationToggle) {
-            event.setCurrentItem(new ItemStack(Material.AIR));
+            event.setCurrentItem(ItemStack.empty());
             openScrambler(player, book);
         } else {
-            event.setCurrentItem(this.enchantmentBookSettings.getNewScrambledBook(book));
+            event.setCurrentItem(this.enchantmentBookSettings.getNewScrambledBook(player, book));
         }
     }
 

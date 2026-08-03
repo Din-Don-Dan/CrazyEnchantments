@@ -214,7 +214,7 @@ public class DustControlListener implements Listener {
                 inventory.setItemInOffHand(this.methods.removeItem(item));
             }
 
-            ItemStack item2 = pickDust().getDust(this.methods.percentPick(data.getChance() + 1, 1), 1);
+            ItemStack item2 = pickDust().getDust(player, this.methods.percentPick(data.getChance() + 1, 1), 1);
 
             inventory.addItem(item2);
 

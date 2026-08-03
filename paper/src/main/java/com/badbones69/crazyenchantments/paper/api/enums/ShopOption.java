@@ -4,6 +4,7 @@ import com.badbones69.crazyenchantments.paper.CrazyEnchantments;
 import com.badbones69.crazyenchantments.paper.api.economy.Currency;
 import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import com.badbones69.crazyenchantments.paper.api.enums.keys.FileKeys;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -73,8 +74,8 @@ public enum ShopOption {
         }
     }
     
-    public ItemStack getItem() {
-        return getItemBuilder().build();
+    public ItemStack getItem(final Audience player) {
+        return getItemBuilder().build(player);
     }
     
     public ItemBuilder getItemBuilder() {

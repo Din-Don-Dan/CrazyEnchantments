@@ -16,6 +16,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.EventUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
 import com.badbones69.crazyenchantments.paper.support.SupportUtils;
 import com.ryderbelserion.fusion.paper.builders.folia.FoliaScheduler;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -205,25 +206,26 @@ public class AxeEnchantments implements Listener {
         ItemStack item = this.methods.getItemInHand(damager);
 
         if (EnchantUtils.isEventActive(CEnchantments.DECAPITATION, damager, item, this.enchantmentBookSettings.getEnchantments(item))) {
-            event.getDrops().add(new ItemBuilder().setMaterial(Material.PLAYER_HEAD).setPlayerName(player.getName()).build());
+            event.getDrops().add(new ItemBuilder().setMaterial(Material.PLAYER_HEAD).setPlayerName(player.getName()).build(player));
         }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
-        Player killer = event.getEntity().getKiller();
+        final LivingEntity entity = event.getEntity();
+        final Player killer = entity.getKiller();
 
         if (killer == null) return;
 
         ItemStack item = this.methods.getItemInHand(killer);
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(item);
-        Material headMat = EntityUtils.getHeadMaterial(event.getEntity());
+        Material headMat = EntityUtils.getHeadMaterial(entity);
 
         if (headMat != null && !EventUtils.containsDrop(event, headMat)) {
             double multiplier = this.crazyManager.getDecapitationHeadMap().getOrDefault(headMat, 0.0);
 
             if (multiplier != 0.0 && EnchantUtils.isEventActive(CEnchantments.DECAPITATION, killer, item, enchantments, multiplier)) {
-                ItemStack head = new ItemBuilder().setMaterial(headMat).build();
+                ItemStack head = new ItemBuilder().setMaterial(headMat).build(entity instanceof Player player ? player : Audience.empty());
                 event.getDrops().add(head);
             }
         }
