@@ -70,11 +70,15 @@ public class AxeEnchantments implements Listener {
 
         Player player = event.getPlayer();
         ItemStack currentItem = methods.getItemInHand(player);
-
+        Set<Block> blockList = new HashSet<>();
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(currentItem);
         if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.TREEFELLER, enchantments)) return;
-
-        Set<Block> blockList = getTree(event.getBlock(), treefellerMax[enchantments.get(CEnchantments.TREEFELLER.getEnchantment())-1] );
+        if (!player.isSneaking()) {
+            blockList = getTree(event.getBlock(), treefellerMax[enchantments.get(CEnchantments.TREEFELLER.getEnchantment())-1] );
+        } else {
+            blockList.add(event.getBlock());
+        }
+        
         boolean damage = FileKeys.CONFIG.getConfiguration().getBoolean("Settings.EnchantmentOptions.TreeFeller-Full-Durability", true);
 
         if (!new MassBlockBreakEvent(player, blockList).callEvent()) return;
