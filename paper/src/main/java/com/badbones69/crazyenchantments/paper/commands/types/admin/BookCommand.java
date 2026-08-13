@@ -33,7 +33,7 @@ public class BookCommand extends com.badbones69.crazyenchantments.paper.commands
         }
         
         Optional.ofNullable(this.crazyManager.getEnchantmentFromName(name)).ifPresentOrElse(book -> {
-            final ItemStack itemStack = new CEBook(book, level, amount).buildBook(); //todo() random support
+            final ItemStack itemStack = new CEBook(book, level, amount).buildBook(player); //todo() random support
 
             if (itemStack.isEmpty()) {
                 sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

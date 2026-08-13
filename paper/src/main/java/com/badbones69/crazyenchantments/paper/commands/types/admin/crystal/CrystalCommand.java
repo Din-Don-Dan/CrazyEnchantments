@@ -20,7 +20,7 @@ public class CrystalCommand extends EnchantCommand {
     @Permission(value = "crazyenchantments.crystal", def = PermissionDefault.OP)
     @Syntax("/crazyenchantments crystal [amount] [player]")
     public void execute(final CommandSender sender, @Suggestion("numbers") final int amount, final Player player) {
-        final ItemStack itemStack = this.crystal.getCrystal(amount);
+        final ItemStack itemStack = this.crystal.getCrystal(player, amount);
         
         if (itemStack.isEmpty()) {
             sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

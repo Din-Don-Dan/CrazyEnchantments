@@ -7,6 +7,7 @@ import com.badbones69.crazyenchantments.paper.api.utils.ColorUtils;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.datacomponent.item.ItemLore;
 import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -85,8 +86,8 @@ public enum Scrolls {
         return getFromName(data.get(scroll, PersistentDataType.STRING));
     }
 
-    public ItemStack getScroll() {
-        final ItemStack item = itemBuilderScrolls.get(this).build();
+    public ItemStack getScroll(final Audience player) {
+        final ItemStack item = itemBuilderScrolls.get(this).build(player);
 
         item.editPersistentDataContainer(container -> {
             container.set(scroll, PersistentDataType.STRING, this.configName);
@@ -95,8 +96,8 @@ public enum Scrolls {
         return item;
     }
 
-    public ItemStack getScroll(final int amount) {
-        final ItemStack item = itemBuilderScrolls.get(this).setAmount(amount).build();
+    public ItemStack getScroll(final Audience player, final int amount) {
+        final ItemStack item = itemBuilderScrolls.get(this).setAmount(amount).build(player);
 
         item.editPersistentDataContainer(container -> {
             container.set(scroll, PersistentDataType.STRING, this.configName);

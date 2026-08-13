@@ -69,21 +69,21 @@ public class ShopListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onInvClick(InventoryClickEvent event) {
-        ItemStack item = event.getCurrentItem();
-        Inventory inventory = event.getInventory();
+        final ItemStack item = event.getCurrentItem();
+        final Inventory inventory = event.getInventory();
 
         if (!(inventory.getHolder(false) instanceof ShopMenu holder)) return;
 
         if (item == null) return;
 
-        Player player = holder.getPlayer();
+        final Player player = holder.getPlayer();
 
         event.setCancelled(true);
 
         if (event.getClickedInventory() != player.getOpenInventory().getTopInventory()) return;
 
         for (Category category : this.enchantmentBookSettings.getCategories()) {
-            if (category.isInGUI() && item.isSimilar(category.getDisplayItem().build())) {
+            if (category.isInGUI() && item.isSimilar(category.getDisplayItem().build(player))) {
 
                 if (this.methods.isInventoryFull(player)) return;
 
@@ -105,7 +105,7 @@ public class ShopListener implements Listener {
 
                         this.plugin.getServer().getPluginManager().callEvent(buyBookEvent);
 
-                        player.getInventory().addItem(book.buildBook());
+                        player.getInventory().addItem(book.buildBook(player));
                     });
                 } else {
                     player.sendMessage(ColorUtils.getPrefix("&cThe category &6" + category.getName() + " &chas no enchantments assigned to it."));
@@ -116,7 +116,7 @@ public class ShopListener implements Listener {
 
             LostBook lostBook = category.getLostBook();
 
-            if (lostBook.isInGUI() && item.isSimilar(lostBook.getDisplayItem().build())) {
+            if (lostBook.isInGUI() && item.isSimilar(lostBook.getDisplayItem().build(player))) {
                 if (this.methods.isInventoryFull(player)) return;
 
                 if (lostBook.getCurrency() != null && player.getGameMode() != GameMode.CREATIVE) {
@@ -129,13 +129,13 @@ public class ShopListener implements Listener {
                     }
                 }
 
-                player.getInventory().addItem(lostBook.getLostBook(category).build());
+                player.getInventory().addItem(lostBook.getLostBook(category).build(player));
                 return;
             }
         }
 
         for (ShopOption option : ShopOption.values()) {
-            if (option.isInGUI() && item.isSimilar(option.getItem())) {
+            if (option.isInGUI() && item.isSimilar(option.getItem(player))) {
                 // If the option is buy-able then it check to see if they player can buy it and take the money.
 
                 if (option.isBuyable()) {
@@ -174,13 +174,13 @@ public class ShopListener implements Listener {
                     }
 
                     case INFO -> MenuManager.openInfoMenu(player);
-                    case PROTECTION_CRYSTAL -> player.getInventory().addItem(this.protectionCrystalSettings.getCrystal());
-                    case SCRAMBLER -> player.getInventory().addItem(this.scramblerListener.getScramblers());
-                    case SUCCESS_DUST -> player.getInventory().addItem(Dust.SUCCESS_DUST.getDust());
-                    case DESTROY_DUST -> player.getInventory().addItem(Dust.DESTROY_DUST.getDust());
-                    case BLACK_SCROLL -> player.getInventory().addItem(Scrolls.BLACK_SCROLL.getScroll());
-                    case WHITE_SCROLL -> player.getInventory().addItem(Scrolls.WHITE_SCROLL.getScroll());
-                    case TRANSMOG_SCROLL -> player.getInventory().addItem(Scrolls.TRANSMOG_SCROLL.getScroll());
+                    case PROTECTION_CRYSTAL -> player.getInventory().addItem(this.protectionCrystalSettings.getCrystal(player));
+                    case SCRAMBLER -> player.getInventory().addItem(this.scramblerListener.getScramblers(player));
+                    case SUCCESS_DUST -> player.getInventory().addItem(Dust.SUCCESS_DUST.getDust(player));
+                    case DESTROY_DUST -> player.getInventory().addItem(Dust.DESTROY_DUST.getDust(player));
+                    case BLACK_SCROLL -> player.getInventory().addItem(Scrolls.BLACK_SCROLL.getScroll(player));
+                    case WHITE_SCROLL -> player.getInventory().addItem(Scrolls.WHITE_SCROLL.getScroll(player));
+                    case TRANSMOG_SCROLL -> player.getInventory().addItem(Scrolls.TRANSMOG_SCROLL.getScroll(player));
                     case SLOT_CRYSTAL -> player.getInventory().addItem(this.slotCrystalListener.getSlotCrystal());
                 }
 

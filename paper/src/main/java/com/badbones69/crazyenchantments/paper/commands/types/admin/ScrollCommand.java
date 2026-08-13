@@ -30,7 +30,7 @@ public class ScrollCommand extends com.badbones69.crazyenchantments.paper.comman
         }
         
         Optional.ofNullable(Scrolls.getFromName(name)).ifPresentOrElse(scroll -> {
-            final ItemStack itemStack = scroll.getScroll(amount);
+            final ItemStack itemStack = scroll.getScroll(player, amount);
 
             if (itemStack.isEmpty()) {
                 sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

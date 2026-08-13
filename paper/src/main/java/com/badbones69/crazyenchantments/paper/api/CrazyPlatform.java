@@ -34,7 +34,7 @@ public class CrazyPlatform {
 
     public void init() {
         this.fusion = new FusionPaper(this.plugin);
-        this.fusion.init();
+        this.fusion.init().post();
 
         this.fileManager = this.fusion.getFileManager();
 

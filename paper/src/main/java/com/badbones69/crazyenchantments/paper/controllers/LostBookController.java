@@ -76,7 +76,7 @@ public class LostBookController implements Listener {
             return;
         }
 
-        player.getInventory().addItem(book.buildBook());
+        player.getInventory().addItem(book.buildBook(player));
 
         HashMap<String, String> placeholders = new HashMap<>();
 

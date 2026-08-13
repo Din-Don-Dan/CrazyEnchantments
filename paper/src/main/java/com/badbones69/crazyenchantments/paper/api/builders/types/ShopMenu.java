@@ -29,16 +29,18 @@ public class ShopMenu extends InventoryBuilder {
     public InventoryBuilder build() {
         HashMap<String, String> placeholders = new HashMap<>();
 
+        final Player player = getPlayer();
+
         for (Currency currency : Currency.values()) {
-            placeholders.put("%" + currency.getName() + "%", String.valueOf(this.currencyAPI.getCurrency(getPlayer(), currency)));
+            placeholders.put("%" + currency.getName() + "%", String.valueOf(this.currencyAPI.getCurrency(player, currency)));
         }
 
         for (Map.Entry<ItemBuilder, Integer> itemBuilders : this.shopManager.getCustomizerItems().entrySet()) {
             itemBuilders.getKey().setNamePlaceholders(placeholders).setLorePlaceholders(placeholders);
-            getInventory().setItem(itemBuilders.getValue(), itemBuilders.getKey().build());
+            getInventory().setItem(itemBuilders.getValue(), itemBuilders.getKey().build(player));
         }
 
-        this.shopManager.getShopItems().keySet().forEach(itemBuilder -> getInventory().setItem(this.shopManager.getShopItems().get(itemBuilder), itemBuilder.build()));
+        this.shopManager.getShopItems().keySet().forEach(itemBuilder -> getInventory().setItem(this.shopManager.getShopItems().get(itemBuilder), itemBuilder.build(player)));
 
         return this;
     }

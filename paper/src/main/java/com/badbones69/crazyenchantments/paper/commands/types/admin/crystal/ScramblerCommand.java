@@ -20,7 +20,7 @@ public class ScramblerCommand extends EnchantCommand {
     @Permission(value = "crazyenchantments.scrambler", def = PermissionDefault.OP)
     @Syntax("/crazyenchantments scrambler [amount] [player]")
     public void execute(final CommandSender sender, @Suggestion("numbers") final int amount, final Player player) {
-        final ItemStack itemStack = this.scrambler.getScramblers(amount);
+        final ItemStack itemStack = this.scrambler.getScramblers(player, amount);
 
         if (itemStack.isEmpty()) {
             sender.sendMessage(Messages.ITEM_CANNOT_BE_EMPTY.getMessage(Map.of(

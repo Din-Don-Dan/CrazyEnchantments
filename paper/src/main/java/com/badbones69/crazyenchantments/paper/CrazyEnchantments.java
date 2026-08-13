@@ -36,6 +36,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class CrazyEnchantments extends JavaPlugin {
 
+    public static CrazyEnchantments getPlugin() {
+        return JavaPlugin.getPlugin(CrazyEnchantments.class);
+    }
+
     private Starter starter;
 
     // Plugin Listeners.

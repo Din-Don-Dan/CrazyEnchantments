@@ -57,7 +57,7 @@ public class KitsMenu extends InventoryBuilder {
 
             slot--;
 
-            getInventory().setItem(slot, ItemBuilder.convertString(value).build());
+            getInventory().setItem(slot, ItemBuilder.convertString(value).build(getPlayer()));
         }
 
         this.crazyManager.getCEPlayer(getPlayer()).ifPresent(cePlayer -> {

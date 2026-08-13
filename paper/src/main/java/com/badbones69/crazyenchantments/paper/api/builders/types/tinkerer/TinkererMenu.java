@@ -40,16 +40,18 @@ public class TinkererMenu extends InventoryBuilder {
 
     @Override
     public InventoryBuilder build() {
+        final Player player = getPlayer();
+
         final ItemStack button = new ItemBuilder().setMaterial(this.configuration.getString("Settings.TradeButton-Type", "RED_STAINED_GLASS_PANE"))
                 .setName(this.configuration.getString("Settings.TradeButton", "&eClick to accept the trade"))
                 .setLore(this.configuration.getStringList("Settings.TradeButton-Lore"))
                 .setItemModel(this.configuration.getString("Settings.TradeButton-Model.Namespace", ""), this.configuration.getString("Settings.TradeButton-Model.Key", ""))
-                .addKey(DataKeys.trade_button.getNamespacedKey(), "").build();
+                .addKey(DataKeys.trade_button.getNamespacedKey(), "").build(player);
 
         getInventory().setItem(0, button);
         getInventory().setItem(8, button);
 
-        ItemStack divider = new ItemBuilder().setMaterial(Material.WHITE_STAINED_GLASS_PANE).setName(" ").build();
+        ItemStack divider = new ItemBuilder().setMaterial(Material.WHITE_STAINED_GLASS_PANE).setName(" ").build(player);
 
         List.of(4, 13, 22, 31, 40, 49).forEach(slot -> getInventory().setItem(slot, divider));
 
@@ -149,7 +151,7 @@ public class TinkererMenu extends InventoryBuilder {
                 } else { // Clicking in their inventory.
                     if (isFirstEmpty(event, player, current, topInventory)) return;
 
-                    inventory.setItem(this.slots.get(inventory.firstEmpty()), Dust.MYSTERY_DUST.getDust(TinkererManager.getMaxDustLevelFromBook(book, this.configuration), 1));
+                    inventory.setItem(this.slots.get(inventory.firstEmpty()), Dust.MYSTERY_DUST.getDust(player, TinkererManager.getMaxDustLevelFromBook(book, this.configuration), 1));
                     inventory.setItem(inventory.firstEmpty(), current);
                 }
 
@@ -172,7 +174,7 @@ public class TinkererMenu extends InventoryBuilder {
                     // Clicking in their inventory.
                     if (isFirstEmpty(event, player, current, topInventory)) return;
 
-                    inventory.setItem(this.slots.get(inventory.firstEmpty()), TinkererManager.getXPBottle(String.valueOf(totalXP), this.configuration));
+                    inventory.setItem(this.slots.get(inventory.firstEmpty()), TinkererManager.getXPBottle(player, String.valueOf(totalXP), this.configuration));
                     inventory.setItem(inventory.firstEmpty(), current);
                 }
 

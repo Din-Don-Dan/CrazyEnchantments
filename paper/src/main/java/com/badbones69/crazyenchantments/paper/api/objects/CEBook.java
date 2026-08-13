@@ -10,6 +10,7 @@ import com.badbones69.crazyenchantments.paper.api.builders.ItemBuilder;
 import com.badbones69.crazyenchantments.paper.api.utils.ColorUtils;
 import com.badbones69.crazyenchantments.paper.api.utils.NumberUtils;
 import com.badbones69.crazyenchantments.paper.controllers.settings.EnchantmentBookSettings;
+import net.kyori.adventure.audience.Audience;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
@@ -244,8 +245,8 @@ public class CEBook {
     /**
      * @return Return the book as an ItemStack.
      */
-    public ItemStack buildBook() {
-        return getItemBuilder().addKey(DataKeys.stored_enchantments.getNamespacedKey(), Methods.getGson().toJson(new EnchantedBook(this.enchantment.getName(), this.successRate, this.destroyRate, this.level), EnchantedBook.class)).build();
+    public ItemStack buildBook(final Audience player) {
+        return getItemBuilder().addKey(DataKeys.stored_enchantments.getNamespacedKey(), Methods.getGson().toJson(new EnchantedBook(this.enchantment.getName(), this.successRate, this.destroyRate, this.level), EnchantedBook.class)).build(player);
     }
 
     /**

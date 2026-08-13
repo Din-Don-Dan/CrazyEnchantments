@@ -31,6 +31,8 @@ public class BaseMenu extends InventoryBuilder {
 
     @Override
     public InventoryBuilder build() {
+        final Player player = getPlayer();
+
         if (getEnchantmentType() != null) {
             List<CEnchantment> enchantments = getEnchantmentType().getEnchantments();
 
@@ -38,7 +40,7 @@ public class BaseMenu extends InventoryBuilder {
 
             for (CEnchantment enchantment : enchantments) {
                 if (enchantment.isActivated()) {
-                    getInventory().addItem(book.setName(enchantment.getInfoName()).setLore(enchantment.getInfoDescription()).build());
+                    getInventory().addItem(book.setName(enchantment.getInfoName()).setLore(enchantment.getInfoDescription()).build(player));
                 }
             }
 
