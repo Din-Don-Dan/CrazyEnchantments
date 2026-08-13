@@ -78,14 +78,18 @@ public class PickaxeEnchantments implements Listener {
         Player player = event.getPlayer();
         Block initialBlock = event.getBlock();
         ItemStack currentItem = this.methods.getItemInHand(player);
+        Set<Block> blockList = new HashSet<>();
         Map<CEnchantment, Integer> enchantments = enchantmentBookSettings.getEnchantments(currentItem);
         boolean damage = FileKeys.CONFIG.getConfiguration().getBoolean("Settings.EnchantmentOptions.Blast-Full-Durability", true);
 
         if (!(this.blocks.containsKey(player) && this.blocks.get(player).containsKey(initialBlock))) return;
         if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.BLAST, enchantments)) return;
-
-        Set<Block> blockList = getBlocks(initialBlock.getLocation(), blocks.get(player).get(initialBlock), (enchantmentBookSettings.getLevel(currentItem, CEnchantments.BLAST.getEnchantment()) - 1));
-        this.blocks.remove(player);
+        if (!player.isSneaking()) {
+            blockList = getBlocks(initialBlock.getLocation(), blocks.get(player).get(initialBlock), (enchantmentBookSettings.getLevel(currentItem, CEnchantments.BLAST.getEnchantment()) - 1));
+            this.blocks.remove(player);
+        } else {
+            blockList.add(initialBlock);
+        }
 
         if (massBlockBreakCheck(player, blockList)) return;
         event.setCancelled(true);
@@ -109,12 +113,17 @@ public class PickaxeEnchantments implements Listener {
         Player player = event.getPlayer();
         Block currentBlock = event.getBlock();
         ItemStack currentItem = methods.getItemInHand(player);
+        HashSet<Block> blockList = new HashSet<>();
         Map<CEnchantment, Integer> enchantments = this.enchantmentBookSettings.getEnchantments(currentItem);
         boolean damage = FileKeys.CONFIG.getConfiguration().getBoolean("Settings.EnchantmentOptions.VeinMiner-Full-Durability", true);
 
         if (!EnchantUtils.isMassBlockBreakActive(player, CEnchantments.VEINMINER, enchantments)) return;
-        HashSet<Block> blockList = getVeinminerBlocks(currentBlock, maxVeinMinerBlocks[enchantments.get(CEnchantments.VEINMINER.getEnchantment())-1]);
-
+        
+        if (!player.isSneaking()) {
+            blockList = getVeinminerBlocks(currentBlock, maxVeinMinerBlocks[enchantments.get(CEnchantments.VEINMINER.getEnchantment())-1]);
+        } else {
+            blockList.add(currentBlock);
+        } 
         if (massBlockBreakCheck(player, blockList)) return;
 
         event.setCancelled(true);
